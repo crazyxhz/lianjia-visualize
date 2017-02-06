@@ -17,8 +17,10 @@
 
     </style>
 
-    <link rel="stylesheet" href="https://js.arcgis.com/4.2/esri/css/main.css">
-    <script src="https://js.arcgis.com/4.2/"></script>
+    <!--<link rel="stylesheet" href="https://js.arcgis.com/4.2/esri/css/main.css">-->
+    <!--<script src="https://js.arcgis.com/4.2/"></script>-->
+    <link rel="stylesheet" href="http://localhost/jsapi/4.2/esri/css/main.css">
+    <script src="http://localhost/jsapi/4.2/"></script>
     <script>
         require([
             'esri/layers/FeatureLayer', 'esri/Graphic',
@@ -39,9 +41,11 @@
             "dojo/dom",
             "dojo/on", "esri/layers/MapImageLayer", "esri/renderers/SimpleRenderer",
             "esri/symbols/PolygonSymbol3D",
-            "esri/symbols/ExtrudeSymbol3DLayer",
+            "esri/symbols/ExtrudeSymbol3DLayer", "esri/layers/TileLayer", "esri/Basemap","esri/WebMap",
             "dojo/domReady!"
-        ], function (FeatureLayer, Graphic, LabelClass, LabelSymbol3D, TextSymbol3DLayer, Map, SceneView, Search, Point, Polyline, Polygon, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, GraphicsLayer, esriConfig, dom, on, MapImageLayer, SimpleRenderer, PolygonSymbol3D, ExtrudeSymbol3DLayer) {
+        ], function (FeatureLayer, Graphic, LabelClass, LabelSymbol3D, TextSymbol3DLayer, Map, SceneView, Search, Point, Polyline, Polygon, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, GraphicsLayer, esriConfig, dom, on, MapImageLayer, SimpleRenderer, PolygonSymbol3D, ExtrudeSymbol3DLayer, TileLayer, Basemap,WebMap) {
+
+
             graphicsLayer = new GraphicsLayer();
             renderer = new SimpleRenderer({
                 symbol: new PolygonSymbol3D({
@@ -101,7 +105,7 @@
             graphicsLayer.renderer = renderer
             graphicsLayer.popupTemplate = template
             map = new Map({
-                basemap: "streets",
+                basemap: 'topo',
                 ground: "world-elevation",
                 layers: [graphicsLayer]
             });
