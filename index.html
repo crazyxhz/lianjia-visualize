@@ -41,7 +41,7 @@
             "dojo/dom",
             "dojo/on", "esri/layers/MapImageLayer", "esri/renderers/SimpleRenderer",
             "esri/symbols/PolygonSymbol3D",
-            "esri/symbols/ExtrudeSymbol3DLayer", "esri/layers/TileLayer", "esri/Basemap", "esri/WebMap", 
+            "esri/symbols/ExtrudeSymbol3DLayer", "esri/layers/TileLayer", "esri/Basemap", "esri/WebMap",
             "dojo/domReady!"
         ], function (FeatureLayer, Graphic, LabelClass, LabelSymbol3D, TextSymbol3DLayer, Map, SceneView, Search, Point, Polyline, Polygon, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, GraphicsLayer, esriConfig, dom, on, MapImageLayer, SimpleRenderer, PolygonSymbol3D, ExtrudeSymbol3DLayer, TileLayer, Basemap, WebMap) {
 
@@ -115,6 +115,9 @@
                 center: [116.3314279277704, 39.977584565],
                 zoom: 13
             });
+            view.on('click', function (e) {
+                console.log(e)
+            })
             var xhr = new XMLHttpRequest()
             xhr.open('get', 'resblock.json')
             xhr.onload = function () {
@@ -122,7 +125,10 @@
                 var graphics_array = []
                 result.forEach(function (e) {
                     var g = new Graphic()
-                    g.geometry = new Polygon(buildPolygonFromPt({latitude: e[4], longitude: e[3]}))
+                    g.geometry = new Polygon(buildPolygonFromPt({
+                        longitude: e[3] - 0.010875198921709739,
+                        latitude: e[4] - 0.008736196697576304
+                    }))
                     g.attributes = {
                         "count": e[1],
                         'avgprice': e[2],
