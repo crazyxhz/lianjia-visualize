@@ -41,11 +41,11 @@
             "dojo/dom",
             "dojo/on", "esri/layers/MapImageLayer", "esri/renderers/SimpleRenderer",
             "esri/symbols/PolygonSymbol3D",
-            "esri/symbols/ExtrudeSymbol3DLayer", "esri/layers/TileLayer", "esri/Basemap","esri/WebMap",
+            "esri/symbols/ExtrudeSymbol3DLayer", "esri/layers/TileLayer", "esri/Basemap", "esri/WebMap", 
             "dojo/domReady!"
-        ], function (FeatureLayer, Graphic, LabelClass, LabelSymbol3D, TextSymbol3DLayer, Map, SceneView, Search, Point, Polyline, Polygon, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, GraphicsLayer, esriConfig, dom, on, MapImageLayer, SimpleRenderer, PolygonSymbol3D, ExtrudeSymbol3DLayer, TileLayer, Basemap,WebMap) {
+        ], function (FeatureLayer, Graphic, LabelClass, LabelSymbol3D, TextSymbol3DLayer, Map, SceneView, Search, Point, Polyline, Polygon, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, GraphicsLayer, esriConfig, dom, on, MapImageLayer, SimpleRenderer, PolygonSymbol3D, ExtrudeSymbol3DLayer, TileLayer, Basemap, WebMap) {
 
-
+            esriConfig.request.corsEnabledServers.push("server.arcgisonline.com");
             graphicsLayer = new GraphicsLayer();
             renderer = new SimpleRenderer({
                 symbol: new PolygonSymbol3D({
