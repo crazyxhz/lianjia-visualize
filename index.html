@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     <title>链家可视化</title>
@@ -17,10 +18,10 @@
 
     </style>
 
-    <link rel="stylesheet" href="https://js.arcgis.com/4.2/esri/css/main.css">
-    <script src="https://js.arcgis.com/4.2/"></script>
-    <!--<link rel="stylesheet" href="http://localhost/jsapi/4.2/esri/css/main.css">-->
-    <!--<script src="http://localhost/jsapi/4.2/"></script>-->
+    <!--<link rel="stylesheet" href="https://js.arcgis.com/4.2/esri/css/main.css">-->
+    <!--<script src="https://js.arcgis.com/4.2/"></script>-->
+    <link rel="stylesheet" href="http://localhost/jsapi/4.2/esri/css/main.css">
+    <script src="http://localhost/jsapi/4.2/"></script>
     <script>
         require([
             'esri/layers/FeatureLayer', 'esri/Graphic',
@@ -41,9 +42,9 @@
             "dojo/dom",
             "dojo/on", "esri/layers/MapImageLayer", "esri/renderers/SimpleRenderer",
             "esri/symbols/PolygonSymbol3D",
-            "esri/symbols/ExtrudeSymbol3DLayer", "esri/layers/TileLayer", "esri/Basemap", "esri/WebMap",
+            "esri/symbols/ExtrudeSymbol3DLayer", './converter.js',
             "dojo/domReady!"
-        ], function (FeatureLayer, Graphic, LabelClass, LabelSymbol3D, TextSymbol3DLayer, Map, SceneView, Search, Point, Polyline, Polygon, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, GraphicsLayer, esriConfig, dom, on, MapImageLayer, SimpleRenderer, PolygonSymbol3D, ExtrudeSymbol3DLayer, TileLayer, Basemap, WebMap) {
+        ], function (FeatureLayer, Graphic, LabelClass, LabelSymbol3D, TextSymbol3DLayer, Map, SceneView, Search, Point, Polyline, Polygon, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, GraphicsLayer, esriConfig, dom, on, MapImageLayer, SimpleRenderer, PolygonSymbol3D, ExtrudeSymbol3DLayer, converter) {
 
             esriConfig.request.corsEnabledServers.push("server.arcgisonline.com");
             graphicsLayer = new GraphicsLayer();
@@ -56,50 +57,45 @@
                     field: "avgprice",
                     stops: [
                         {
-                            value: 160,
-                            size: 500
+                            value: 50000,
+                            size: 200
                         },
                         {
-                            value: 4000,
-                            size: 1500
+                            value: 120000,
+                            size: 700
                         }]
                 }, {
                     type: "color",
-                    field: "unitprice",
+                    field: "avgprice",
                     stops: [
                         {
-                            value: 18937.0,
-                            color: [77, 247, 61]
+                            value: 50000,
+                            color: '#7CFC00'
                         },
                         {
-                            value: 147247.0,
+                            value: 120000,
                             color: 'red'
                         }]
                 }]
             });
             var template = {
                 title: "小区名称: {name}",
-                content: "<ul><li>房源数量：{count}</li>"
-                + "<li>总价平均：{avgprice} 万元</li>"
-                + "<li>均价：{unitprice} 元/㎡</li>"
-                + "<li>平均面积：{area} 平方米</li>"
-                + "<li>平均关注者：{followers} 人</li>"
-                + "<li>平均交易时间：{lasttrade} </li>" +
+                content: "<ul><li>小区均价：{avgprice}</li>"
+                + "<li>建筑年代：{buildingyears} 年</li>"
+                + "<li>建筑类型：{buildingtype} </li>"
+                + "<li><a href='{url}' target='_blank'>{url}</a> </li>"
+                +
                 "</ul>",
                 fieldInfos: [{
                     fieldName: "name"
                 }, {
-                    fieldName: 'count'
-                }, {
                     fieldName: 'avgprice'
                 }, {
-                    fieldName: "unitprice"
+                    fieldName: "buildingyears"
                 }, {
-                    fieldName: "area"
+                    fieldName: "buildingtype"
                 }, {
-                    fieldName: "followers"
-                }, {
-                    fieldName: "lasttrade"
+                    fieldName: "url"
                 }]
             };
             graphicsLayer.renderer = renderer
@@ -123,30 +119,32 @@
 //                    }, "heading": 0.04549291015287625, "tilt": 22.954148651777917
 //                }
             });
-            view.on('click', function (e) {
-                console.log(e)
-            })
-            var xhr = new XMLHttpRequest()
-            xhr.open('get', 'resblock.json')
+//            view.on('click', function (e) {
+//                console.log(e)
+//            })
+//            var xhr = new XMLHttpRequest()
+
+            xhr.open('get', location.href.replace(/\/[^/]+$/, "/") + 'rb.json')
             xhr.onload = function () {
                 var result = JSON.parse(xhr.responseText)
                 var graphics_array = []
                 result.forEach(function (e) {
+                    if (!e[1]) return
                     var g = new Graphic()
-//                    var gc2 = bd09togcj02(e[4], e[3])
-//                    var gps = gcj02towgs84(gc2[0], gc2[1])
+                    var gcj02 = converter.bd09togcj02(e[2], e[3])
+                    var gps = converter.gcj02towgs84(gcj02[0], gcj02[1])
+
                     g.geometry = new Polygon(buildPolygonFromPt({
-                        longitude: e[3] -0.01285,
-                        latitude: e[4]-0.00758
+                        longitude: gps[0],
+                        latitude: gps[1]
                     }))
+//                    g.geometry = new Polygon(buildPolygonFromPt({latitude: e[4] + 0.01185, longitude: e[3] - 0.00328}))
                     g.attributes = {
-                        "count": e[1],
-                        'avgprice': e[2],
                         'name': e[0],
-                        'unitprice': e[5],
-                        'area': e[6],
-                        'followers': e[7],
-                        'lasttrade': e[8]
+                        'avgprice': e[1],
+                        'buildingyears': e[4],
+                        'buildingtype': e[5],
+                        'url': e[6]//encodeURI('http://bj.lianjia.com/xiaoqu/{0}/'.replace('{0}', e[6]))
                     };
                     graphics_array.push(g)
                 })
@@ -157,7 +155,7 @@
 
             function buildPolygonFromPt(pt) {
                 var temp = {rings: [[]], spatialReference: {wkid: 4326}}
-                var step = 0.001
+                var step = 0.0005
                 temp.rings[0].push([pt.longitude - step, pt.latitude - step])
                 temp.rings[0].push([pt.longitude - step, pt.latitude + step])
                 temp.rings[0].push([pt.longitude + step, pt.latitude + step])
@@ -165,6 +163,7 @@
                 temp.rings[0].push([pt.longitude - step, pt.latitude - step])
                 return temp
             }
+
 //
 //            function bd09togcj02(bd_lon, bd_lat) {
 //                var x = bd_lon - 0.0065;
@@ -213,6 +212,7 @@
 
         });
     </script>
+    <base href="http://bj.lianjia.com/xiaoqu/">
 </head>
 
 <body>
