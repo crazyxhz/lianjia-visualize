@@ -42,9 +42,17 @@
             "dojo/dom",
             "dojo/on", "esri/layers/MapImageLayer", "esri/renderers/SimpleRenderer",
             "esri/symbols/PolygonSymbol3D",
-            "esri/symbols/ExtrudeSymbol3DLayer", './converter.js',
+            "esri/symbols/ExtrudeSymbol3DLayer", './converter.js', "esri/layers/TileLayer", "esri/Basemap",
             "dojo/domReady!"
-        ], function (FeatureLayer, Graphic, LabelClass, LabelSymbol3D, TextSymbol3DLayer, Map, SceneView, Search, Point, Polyline, Polygon, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, GraphicsLayer, esriConfig, dom, on, MapImageLayer, SimpleRenderer, PolygonSymbol3D, ExtrudeSymbol3DLayer, converter) {
+        ], function (FeatureLayer, Graphic, LabelClass, LabelSymbol3D, TextSymbol3DLayer, Map, SceneView, Search, Point, Polyline, Polygon, SimpleMarkerSymbol, SimpleLineSymbol, SimpleFillSymbol, GraphicsLayer, esriConfig, dom, on, MapImageLayer, SimpleRenderer, PolygonSymbol3D, ExtrudeSymbol3DLayer, converter, TileLayer, Basemap) {
+            var layer = new TileLayer({
+                url: "http://services.arcgisonline.com/arcgis/rest/services/World_Street_Map/MapServer"
+            });
+            var customBasemap = new Basemap({
+                baseLayers: [layer],
+                title: "Custom Basemap",
+                id: "myBasemap"
+            });
 
             esriConfig.request.corsEnabledServers.push("server.arcgisonline.com");
             graphicsLayer = new GraphicsLayer();
@@ -101,23 +109,23 @@
             graphicsLayer.renderer = renderer
             graphicsLayer.popupTemplate = template
             map = new Map({
-                basemap: 'streets',
+                basemap: customBasemap,
                 ground: "world-elevation",
                 layers: [graphicsLayer]
             });
             view = new SceneView({
                 map: map,
                 container: "viewDiv",
-                center: [116.3314279277704, 39.977584565],
-                zoom: 13
-//                camera: {
-//                    "position": {
-//                        "x": 12957834.48096514,
-//                        "y": 4870525.087057412,
-//                        "z": 4312.611522917636,
-//                        "spatialReference": {"latestWkid": 3857, "wkid": 102100}
-//                    }, "heading": 0.04549291015287625, "tilt": 22.954148651777917
-//                }
+//                center: [116.3314279277704, 39.977584565],
+//                zoom: 13
+                camera: {
+                    "position": {
+                        "x": 12957310.71818507,
+                        "y": 4802269.015440181,
+                        "z": 30198.989020419307,
+                        "spatialReference": {"latestWkid": 3857, "wkid": 102100}
+                    }, "heading": 353.90349353743824, "tilt": 51.89898329212174
+                }
             });
 //            view.on('click', function (e) {
 //                console.log(e)
