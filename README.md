@@ -1,7 +1,4 @@
-[DEMO](https://crazyxhz.github.io/lianjia-visualize/index.html)
+[在线地址](https://crazyxhz.github.io/lianjia-visualize/index.html)
 
-颜色代表均价
-
-大小代表总价
-
-可以点击查看详情
+- 颜色,柱子高度代表小区均价
+- 可以点击柱子查看详细信息
